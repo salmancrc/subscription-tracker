@@ -12,4 +12,3 @@ app.listen(PORT, () => {
 });
 
 export default app;
-console.log("App.js has been loaded successfully.");
