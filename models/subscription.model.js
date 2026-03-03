@@ -22,6 +22,21 @@ const subscriptionSchema = new mongoose.Schema({
     type: String,
     enum: ['daily', 'weekly', 'monthly', 'yearly']
   },
+  category: {
+    type: String,
+    enum: ['sports', 'news', 'entertainment', 'lifestyle', 'technology', 'finance', 'politics', 'other'],
+    required: true,
+  },
+  paymentMethod: {
+    type: String,
+    required: true,
+    trim: true,
+  },
+  status: {
+    type: String,
+    enum: ['active', 'cancel', 'expired'],
+    default: 'active',
+  },
 }, { timestamps: true });
 
 const Subscription = mongoose.model('Subscription', subscriptionSchema);
