@@ -37,6 +37,29 @@ const subscriptionSchema = new mongoose.Schema({
     enum: ['active', 'cancel', 'expired'],
     default: 'active',
   },
+  startDate: {
+    type: Date,
+    required: true,
+    validate: {
+      validator: (value) => value <= new Date(),
+      message: 'Start date must be in past',
+    }
+  },
+  renewalDate: {
+    type: Date,
+    validate: {
+      validator: function (value) {
+        return value > this.startDate;
+      },
+      message: 'Renewal date must be after the start date',
+    }
+  },
+  user: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User',
+    required: true,
+    index: true,
+  }
 }, { timestamps: true });
 
 const Subscription = mongoose.model('Subscription', subscriptionSchema);
