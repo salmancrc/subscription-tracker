@@ -17,6 +17,26 @@ export const signUp = async (req, res, next) => {
       error.statusCode = 409;
       throw error;
     }
+    
+    // Hash password
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(password, salt)
+
+    const newUsers = await User.create([{ name, email, password: hashedPassword }], { session });
+
+    const token = jwt.sign(payload, { userId: newUsers[0]._id, JWT_SECRET, options: { expiresIn: JWT_EXPIRES_IN } });
+
+    await session.commitTransaction();
+    session.endSession();
+
+    res.status(201).json({
+      success: true,
+      message: 'User Created Successfully',
+      data: {
+        token,
+        user: newUsers[0],
+      }
+    })
   } catch (error) {
     await session.abortTransaction();
     session.endSession();
