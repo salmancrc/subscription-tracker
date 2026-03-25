@@ -9,7 +9,14 @@ export const signUp = async (req, res, next) => {
 
   try {
     const { name, email, password } = req.body;
-  
+    // check if a user already exists
+    const existingUser = await User.findOne(filter, { email });
+
+    if (existingUser) {
+      const error = new Error('User already exists');
+      error.statusCode = 409;
+      throw error;
+    }
   } catch (error) {
     await session.abortTransaction();
     session.endSession();
