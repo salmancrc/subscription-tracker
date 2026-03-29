@@ -29,7 +29,7 @@ const errorMiddleware = (err, req, res, next) => {
       error.statusCode = 400;
     }
 
-    res.status(error.StatusCode || 500).json({
+    res.status(error.statusCode || error.StatusCode || 500).json({
       success: false,
       error: error.message || 'Server Error'
     });
