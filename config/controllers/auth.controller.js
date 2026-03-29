@@ -47,7 +47,21 @@ export const signUp = async (req, res, next) => {
 }
 
 export const signIn = async (req, res, next) => { 
+  try {
+    const { email, password } = req.body;
 
+    const user = await User.findOne({ email });
+
+    if (!user) {
+      const error = new Error('User not found');
+      error.statusCode = 404;
+      throw error;
+    }
+
+
+  } catch (error) {
+    next(error);
+  }
 }
 
 export const signOut = async (req, res, next) => { 
