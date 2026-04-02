@@ -1,4 +1,10 @@
-import { JWT_SECRET } from "../config/env";
+import { JWT_SECRET } from "../config/env.js";
+import jwt from "jsonwebtoken";
+import User from "../models/user.model.js";
+
+// someone trying to access user details ->
+// call auth middelware ->
+// check token -> if valid -> next step -> access the user details
 
 const authorize = async (req, res, next) => {
   try {
@@ -11,7 +17,20 @@ const authorize = async (req, res, next) => {
     if (!token) {
       return res.status(401).json({ message: 'Unauthorized' });
     }
+
+    const decoded = jwt.verify(token, JWT_SECRET);
+
+    const user = await User.findById(decoded.user);
+
+    if (!user) {
+      return res.status(401).json({ message: 'Unauthorized' });
+    }
+    req.user = user;
+
+    next();
   } catch (error) {
     res.status(401).json({ message: 'Unauthorized', error: error.message });
   }
 }
+
+export default authorize;
